@@ -1,13 +1,14 @@
-import React, { Fragment, useState } from "react";
-
-const Formlario = () => {
+import React, { Fragment, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+const Formlario = ({ crearCita }) => {
   const [cita, actualizarCita] = useState({
-    mascota: "",
-    propietario: "",
-    fecha: "",
-    hora: "",
-    sintomas: "",
+    mascota: '',
+    propietario: '',
+    fecha: '',
+    hora: '',
+    sintomas: '',
   });
+  const [error, actulizarError] = useState(false);
 
   const actualizarState = (e) => {
     actualizarCita({
@@ -17,10 +18,39 @@ const Formlario = () => {
   };
   const { mascota, propietario, fecha, hora, sintomas } = cita;
 
+  const submitCita = (e) => {
+    e.preventDefault();
+
+    if (
+      mascota.trim() === '' ||
+      propietario.trim() === '' ||
+      fecha.trim() === '' ||
+      hora.trim() === '' ||
+      sintomas.trim() === ''
+    ) {
+      actulizarError(true);
+      return;
+    }
+    actulizarError(false);
+    cita.id = uuidv4();
+    crearCita(cita);
+    actualizarCita({
+      mascota: '',
+      propietario: '',
+      fecha: '',
+      hora: '',
+      sintomas: '',
+    });
+  };
+
   return (
     <Fragment>
       <h2>Crear cita</h2>
-      <form>
+      {error ? (
+        <p className="alerta-error">Todos los campos son obligatorios</p>
+      ) : null}
+
+      <form onSubmit={submitCita}>
         <label>Nombre mascota</label>
         <input
           type="text"
